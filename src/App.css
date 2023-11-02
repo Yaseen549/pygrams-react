@@ -1,38 +1,194 @@
-.App {
+#header, #headerProgramPage{margin: 50px 0px;}
+#header > p , #headerProgramPage{
+  color: #3472A2;
+  font-weight: 500;
+  font-size: 16px;
+}
+/* #header{background-color: ;} */
+
+.py{color: #3472A2}
+.grams{color: #FFD340}
+
+.boldLinks{
+  color: #3890d4!important;
+}
+.boldLinks:hover{
+  color: #FFD340!important;
+}
+
+a:link, a{
+  text-decoration: none!important;
+  color: #313131;
+}
+
+ul {
+  padding-right: 2rem;
+}
+#nav-links > div > ul > li{
+  list-style: none;
+  display: inline-block;
+  padding: 10px 10px;
+}
+#nav-links{
+  margin: 1rem;
+}
+
+
+
+/* #functions {
+  height: 100vh;
+} */
+#functions > div {
+  display: inline-block;
+  width: 20rem;
+  margin: 10px;
+  padding: 10px;
+  vertical-align: top;
+}
+#functions > div > div {
+  border: 2px solid #3472A2;
+  border-radius: 5px;
+  padding: 10px;
+  padding-bottom: 0px;
+}
+
+#functions > div > div > ul > li, li{
+  list-style: none;
+  list-style-type: none;
+}
+
+#charactersList > li {
+  list-style: none;
+  list-style-type: none;
+}
+
+/* installation */
+.installation{
+  background-color: #212121;
+  color: #e8e8e8;
+ border: 1px solid black;
+ display: inline-block;
+ padding: 10px 18px;
+ border-radius: 5px;
+}
+
+.installation:hover{
+  background-color: #313131;
+}
+
+/* search button */
+input{
+  padding: 10px;
+  border-radius: 5px;
+}
+
+div:empty {
+   display: none;
+}
+
+/* tooltips */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
   text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -60px;
+
+  /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
+  opacity: 0;
+  transition: opacity .5s;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.dol::before{
+  content : "$"
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+section > div > h6 {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.display-block{
+  display: block;
+}
+
+.ourbackersNames{
+  width: 50px;
+  border-radius: 250px;
+}
+
+/* Version 1.0 additions */
+i.fa-external-link-alt{
+  font-size: 8px;
+}
+
+/* popup effect */
+.pop:hover{
+  animation: pop 0.1s linear 1;
+}
+@keyframes pop{
+  50%  {transform: scale(1.2);}
+}
+
+/* copy button */
+.copycssdsign{
+  display: inline-block;
+  outline: 0;
+  cursor: pointer;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px 0 rgb(213 217 217 / 50%);
+  background: #FFD814;
+  border: 1px solid #FCD200;
+  font-size: 11px;
+  height: 22px;
+  padding: 0 6px;
+  text-align: center;
+  font-weight: 500;
+  color: #0F1111;
+}
+.copycssdsign:hover{
+  background: #F7CA00;
+  border-color: #F2C200;
+  box-shadow: 0 2px 5px 0 rgb(213 217 217 / 50%);
+}
+.copycssdsign:active{
+  font-size: 10px;
+}
+.copybutton{
+  padding: 10px;
+}
+.copybox{
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.code-preview{
+  margin: 25px;
+  /* box-shadow: 1px 1px 20px #313131; */
+}
+
+#footer{
   color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  background-color: #313131;
+  padding: 25px; 
 }
