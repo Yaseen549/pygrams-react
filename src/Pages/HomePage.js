@@ -44,7 +44,7 @@ const displayData = (programsCollectedData) => {
             listOfProgs[i][j] +
             '><li class="pop">' +
             listOfProgs[i][j] +
-            "()</li></a>"
+            "()  </li></a>"
         )
       );
     }

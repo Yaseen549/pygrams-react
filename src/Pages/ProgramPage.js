@@ -1,6 +1,15 @@
 import GetCode from "./Components/GetCode";
+import React, { useState, useEffect } from "react";
 
 function ProgramPage({ programPath }) {
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  }, []);
+
   // console.log(programPath); // gives output like" /generateOddNumbers
 
   let functionName = "";
@@ -28,12 +37,12 @@ function ProgramPage({ programPath }) {
             {functionName}(){" "}
             <span className="copybutton">
               <button
-                className="copycssdsign"
+                className="copycssdsign bold"
                 onClick={() =>
                   navigator.clipboard.writeText(`${functionName}()`)
                 }
               >
-                Copy
+                <span className="bold">Copy</span>  
               </button>
             </span>
           </span>
@@ -42,10 +51,16 @@ function ProgramPage({ programPath }) {
         <br />
 
         <div className="code-preview">
-          <GetCode functionName={functionName} />
+          {loading ? (
+            <div className="loader-container">
+              <div className="spinner"></div>
+            </div>
+          ) : (
+            <GetCode functionName={functionName} />
+          )}
+          ;
         </div>
       </section>
-      <section></section>
     </div>
   );
 }

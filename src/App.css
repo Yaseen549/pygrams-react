@@ -192,3 +192,15 @@ i.fa-external-link-alt{
   background-color: #313131;
   padding: 25px; 
 }
+
+
+.loader-container {
+  width: 100%;
+  padding: 20px;
+  /* height: 10vh; */
+  position: fixed;
+  background: rgba(0, 0, 0, 0.834)
+      url("https://media.giphy.com/media/3AMRa6DRUhMli/giphy.gif") center
+      no-repeat;
+  z-index: 1;
+}
