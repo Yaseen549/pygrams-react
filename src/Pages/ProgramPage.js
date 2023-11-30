@@ -42,7 +42,7 @@ function ProgramPage({ programPath }) {
                   navigator.clipboard.writeText(`${functionName}()`)
                 }
               >
-                <span className="bold">Copy</span>  
+                <span className="bold">Copy</span>
               </button>
             </span>
           </span>
@@ -58,7 +58,6 @@ function ProgramPage({ programPath }) {
           ) : (
             <GetCode functionName={functionName} />
           )}
-          ;
         </div>
       </section>
     </div>

@@ -101,7 +101,7 @@ function HomePage() {
         </h1>
         <p className="">
           The Python Package to get all your hustling Programs in one{" "}
-          <a href="https://github.com/Yaseen549/pygrams" className="_FD4">
+          <a href="https://github.com/Yaseen549/pygrams" className="boldLinks">
             CodeBase{" "}
             <sup>
               <i className="fas fa-external-link-alt" aria-hidden="true"></i>
@@ -110,7 +110,7 @@ function HomePage() {
         </p>
         <span className="bold">
           Watch Tutorials on{" "}
-          <a className="link _F00" href="https://youtu.be/VGSCx4Ih2Qg">
+          <a className="link _F00 boldLinks" href="https://youtu.be/VGSCx4Ih2Qg">
             YouTube{" "}
             <sup>
               <i className="fas fa-external-link-alt" aria-hidden="true"></i>
