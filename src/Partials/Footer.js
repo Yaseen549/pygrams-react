@@ -1,44 +1,64 @@
+/**
+ * Footer.js - A polished, professional footer component.
+ */
+
+import React from "react";
+import { Box, Container, Typography, Link, Stack, IconButton } from "@mui/material";
+import { YouTube } from "@mui/icons-material";
+
 function Footer() {
   return (
-    <div>
-      <footer id="footer" className="footer">
-        <div className="container">
-          <div className="copyright myflex">
-            <span className="_20p bold">
-              &#169; <span>Formerly (SyberStar) </span>
-            </span>
-            {/* <span className="_20ps">
-              <a href="/views/terms" style={{ color: "black" }}>
-                Terms of Use
-              </a>
-              <br />
-              <a href="/views/privacy" style={{ color: "black" }}>
-                Privacy Policy
-              </a>
-              <br />
-            </span> */}
+    <Box
+      component="footer"
+      sx={{
+        backgroundColor: "#f5f5f5",
+        padding: "16px 0",
+        borderTop: "1px solid #ddd",
+      }}
+    >
+      <Container>
+        {/* Flex container for alignment */}
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          justifyContent="space-between"
+          alignItems="center"
+          spacing={2}
+        >
+          {/* Left Section */}
+          <Typography
+            variant="body2"
+            sx={{ color: "text.secondary", fontWeight: "bold" }}
+          >
+            © Yaseen549 / PyGrams
+          </Typography>
 
-            <span className="_20p right">
-              <a
-                style={{ color: "black" }}
-                href="https://www.youtube.com/channel/UCsALeSluL0sDczILKeHvFJA"
-              >
-                <i className="fa fa-youtube white"></i>{" "}
-                <sup className="_10px bold white">RaynCode</sup>
-              </a>
-              {/* <a
-                style={{ color: "black" }}
-                href="https://www.linkedin.com/company/syberstar/"
-              >
-                <i className="fa fa-linkedin"></i>
-              </a> */}
-            </span>
-          </div>
-        </div>
+          {/* Center Section (Optional Links, commented out for now) */}
+          {/* <Stack direction="row" spacing={2}>
+            <Link href="/views/terms" color="text.secondary" underline="hover">
+              Terms of Use
+            </Link>
+            <Link href="/views/privacy" color="text.secondary" underline="hover">
+              Privacy Policy
+            </Link>
+          </Stack> */}
 
-        <div className="credits"></div>
-      </footer>
-    </div>
+          {/* Right Section */}
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <IconButton
+              href="https://www.youtube.com/channel/UCsALeSluL0sDczILKeHvFJA"
+              target="_blank"
+              sx={{ color: "#FF0000" }}
+              aria-label="YouTube"
+            >
+              <YouTube />
+            </IconButton>
+            {/* <Typography variant="body2" sx={{ fontWeight: "bold", color: "text.primary" }}>
+              RaynCode
+            </Typography> */}
+          </Stack>
+        </Stack>
+      </Container>
+    </Box>
   );
 }
 

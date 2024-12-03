@@ -11,6 +11,9 @@
 # production
 /build
 
+/src/Pages/HomePage.js
+/src/Pages/ProgramPage.js
+
 # misc
 .DS_Store
 .env.local
