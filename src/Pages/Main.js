@@ -9,6 +9,7 @@ import CopyCommandButton from "./components/CopyCommandButton";
 import BackersProfiles from "./components/BackersProfiles";
 import Tips from "./components/Tips";
 import Masonry from 'react-masonry-css'; // Import Masonry for grid layout
+import LibraryImportInstructions from "./components/LibraryImportInstructions";
 
 const Main = () => {
     const navigate = useNavigate();
@@ -98,8 +99,12 @@ const Main = () => {
                 {/* Button to copy pip install command with a note icon */}
                 <CopyCommandButton />
 
+                {/* Library Import Instructions */}
+                <LibraryImportInstructions />
+                
                 {/* Search Box */}
                 <SearchBox searchTerm={searchTerm} handleSearch={handleSearch} />
+
 
                 {error && <Typography color="error">{error}</Typography>}
                 {loading && <CircularProgress />}

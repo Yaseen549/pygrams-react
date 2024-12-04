@@ -51,6 +51,7 @@
     "react-spring": "^9.7.4",
     "react-syntax-highlighter": "^15.5.0",
     "recharts": "^2.13.3",
+    "semver": "^7.6.3",
     "shortid": "^2.2.16",
     "slick-carousel": "^1.8.1",
     "socket.io": "^4.7.5",
