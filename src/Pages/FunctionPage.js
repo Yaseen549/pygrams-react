@@ -5,6 +5,7 @@ import { darcula } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Box, Typography, CircularProgress, Button, Paper, IconButton } from "@mui/material";
 import CheckIcon from '@mui/icons-material/Check';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
+import { github_api } from "./constants";
 
 // Utility function to format function name
 const formatFunctionName = (name) => {
@@ -30,8 +31,7 @@ function FunctionPage() {
   useEffect(() => {
     const fetchFiles = async () => {
       try {
-        const folderUrl =
-          "https://api.github.com/repos/Yaseen549/pygrams/contents/pythonprograms";
+        const folderUrl = github_api; // github url
         const response = await fetch(folderUrl);
         if (!response.ok) {
           throw new Error(`Error: ${response.status} ${response.statusText}`);
