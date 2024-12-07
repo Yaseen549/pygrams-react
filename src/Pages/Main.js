@@ -10,7 +10,7 @@ import BackersProfiles from "./components/BackersProfiles";
 import Tips from "./components/Tips";
 import Masonry from 'react-masonry-css'; // Import Masonry for grid layout
 import LibraryImportInstructions from "./components/LibraryImportInstructions";
-import { github_api } from "./constants";
+import { github_pygrams_dir } from "./constants";
 
 const Main = () => {
     const navigate = useNavigate();
@@ -22,7 +22,7 @@ const Main = () => {
 
     useEffect(() => {
         // const folderUrl = "../../PYTHON/pythonprograms";
-        const folderUrl = github_api; // github url
+        const folderUrl = github_pygrams_dir; // github url
 
         fetch(folderUrl)
             .then((response) => {

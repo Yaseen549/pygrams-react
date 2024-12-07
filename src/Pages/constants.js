@@ -1,5 +1,5 @@
-const github_api = "https://api.github.com/repos/Yaseen549/pygrams/contents/src"
+const github_pygrams_dir = "https://api.github.com/repos/Yaseen549/pygrams/contents/pygrams"
 
 export { 
-    github_api, 
+    github_pygrams_dir, 
  };

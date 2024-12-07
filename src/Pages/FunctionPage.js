@@ -5,7 +5,7 @@ import { darcula } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Box, Typography, CircularProgress, Button, Paper, IconButton } from "@mui/material";
 import CheckIcon from '@mui/icons-material/Check';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
-import { github_api } from "./constants";
+import { github_pygrams_dir } from "./constants";
 
 // Utility function to format function name
 const formatFunctionName = (name) => {
@@ -31,7 +31,7 @@ function FunctionPage() {
   useEffect(() => {
     const fetchFiles = async () => {
       try {
-        const folderUrl = github_api; // github url
+        const folderUrl = github_pygrams_dir; // github url
         const response = await fetch(folderUrl);
         if (!response.ok) {
           throw new Error(`Error: ${response.status} ${response.statusText}`);
@@ -56,32 +56,45 @@ function FunctionPage() {
 
         let code = "";
         filesWithContent.forEach((file) => {
-          const functionStartRegex = new RegExp(`def\\s+${functionName}\\s*\\(`);
-          const functionRegex = /def\s+/;
-
+          const functionStartRegex = new RegExp(`def\\s+${functionName}\\s*\\(`); // Regex to match the specific function
+          const functionRegex = /def\s+/; // Regex to match any function definition
+        
           const match = file.content.match(functionStartRegex);
           if (match) {
             let lines = file.content.split("\n");
             let functionLines = [];
             let inFunction = false;
-
+        
+            // Variable to track indentation level of current function
+            let functionIndentationLevel = null;
+        
             lines.forEach((line) => {
-              if (line.match(functionStartRegex) && !inFunction) {
+              // Check if this is the specific function we're looking for
+              if (line.match(functionStartRegex) && !inFunction && !line.startsWith(" ") && !line.startsWith("\t")) {
                 inFunction = true;
+                functionIndentationLevel = line.search(/\S/); // Get the indentation level
                 functionLines.push(line);
-              } else if (inFunction && !line.match(functionRegex)) {
+              } 
+              // If we are inside the function and it's not another function, collect lines
+              else if (inFunction && !line.match(functionRegex)) {
                 if (!line.trim().startsWith("#")) {
-                  functionLines.push(line);
+                  functionLines.push(line); // Add non-comment lines
                 }
               }
-              if (line.match(functionRegex) && inFunction && !line.match(functionStartRegex)) {
-                inFunction = false;
+              // If another top-level function is encountered, stop collecting
+              else if (inFunction && line.match(functionRegex) && !line.startsWith(" ") && !line.startsWith("\t")) {
+                inFunction = false; // Stop collecting for the current function
+              }
+              // If we encounter nested functions, collect them within the current function
+              else if (inFunction && line.match(functionRegex) && (line.startsWith(" ") || line.startsWith("\t"))) {
+                functionLines.push(line); // Collect nested functions within the current function
               }
             });
-
-            code = functionLines.join("\n");
+        
+            code = functionLines.join("\n"); // Join all lines collected for the current function
           }
         });
+        
 
         if (code) {
           setFunctionCode(code);
