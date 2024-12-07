@@ -23,7 +23,7 @@ const Main = () => {
     useEffect(() => {
         // const folderUrl = "../../PYTHON/pythonprograms";
         const folderUrl = github_pygrams_dir; // github url
-
+    
         fetch(folderUrl)
             .then((response) => {
                 if (!response.ok) {
@@ -45,24 +45,26 @@ const Main = () => {
                             content,
                         }));
                 });
-
+    
                 return Promise.all(filePromises);
             })
             .then((filesWithContent) => {
                 const parsedFiles = filesWithContent.map((file) => {
+                    // Match all function definitions ('def') that are not indented
                     const functionNames = Array.from(
-                        file.content.matchAll(/def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/g)
+                        file.content.matchAll(/^def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/gm) // Regex for top-level functions only
                     ).map((match) => match[1]);
+    
                     return { ...file, functionNames };
                 });
-
+    
                 // Prioritize 'pygrams.py' by placing it first if it exists
                 const sortedFiles = parsedFiles.sort((a, b) => {
                     if (a.name === 'pygrams.py') return -1;
                     if (b.name === 'pygrams.py') return 1;
                     return 0;
                 });
-
+    
                 setFiles(sortedFiles);
                 setFilteredFiles(sortedFiles);
                 setLoading(false);
@@ -72,6 +74,7 @@ const Main = () => {
                 setLoading(false);
             });
     }, []);
+    
 
     const handleSearch = (event) => {
         const value = event.target.value;

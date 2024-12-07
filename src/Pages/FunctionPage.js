@@ -30,86 +30,91 @@ function FunctionPage() {
 
   useEffect(() => {
     const fetchFiles = async () => {
-      try {
-        const folderUrl = github_pygrams_dir; // github url
-        const response = await fetch(folderUrl);
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
+        try {
+            const folderUrl = github_pygrams_dir; // GitHub URL
+            const response = await fetch(folderUrl);
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status} ${response.statusText}`);
+            }
+            const data = await response.json();
 
-        const filePromises = data.map((file) =>
-          fetch(file.download_url)
-            .then((res) => {
-              if (!res.ok) {
-                throw new Error(`Error fetching file: ${res.statusText}`);
-              }
-              return res.text();
-            })
-            .then((content) => ({
-              name: file.name,
-              content,
-            }))
-        );
+            // Fetch content for each file
+            const filePromises = data.map((file) =>
+                fetch(file.download_url)
+                    .then((res) => {
+                        if (!res.ok) {
+                            throw new Error(`Error fetching file: ${res.statusText}`);
+                        }
+                        return res.text();
+                    })
+                    .then((content) => ({
+                        name: file.name,
+                        content,
+                    }))
+            );
 
-        const filesWithContent = await Promise.all(filePromises);
+            const filesWithContent = await Promise.all(filePromises);
 
-        let code = "";
-        filesWithContent.forEach((file) => {
-          const functionStartRegex = new RegExp(`def\\s+${functionName}\\s*\\(`); // Regex to match the specific function
-          const functionRegex = /def\s+/; // Regex to match any function definition
-        
-          const match = file.content.match(functionStartRegex);
-          if (match) {
-            let lines = file.content.split("\n");
-            let functionLines = [];
-            let inFunction = false;
-        
-            // Variable to track indentation level of current function
-            let functionIndentationLevel = null;
-        
-            lines.forEach((line) => {
-              // Check if this is the specific function we're looking for
-              if (line.match(functionStartRegex) && !inFunction && !line.startsWith(" ") && !line.startsWith("\t")) {
-                inFunction = true;
-                functionIndentationLevel = line.search(/\S/); // Get the indentation level
-                functionLines.push(line);
-              } 
-              // If we are inside the function and it's not another function, collect lines
-              else if (inFunction && !line.match(functionRegex)) {
-                if (!line.trim().startsWith("#")) {
-                  functionLines.push(line); // Add non-comment lines
+            let code = "";
+
+            // Iterate through each file's content
+            filesWithContent.forEach((file) => {
+                // Create a regex to match the specific function's definition
+                const functionStartRegex = new RegExp(`def\\s+${functionName}\\s*\\(`);
+                const functionRegex = /def\s+/; // General regex for any function definition
+
+                // Check if the function is found in the content
+                const match = file.content.match(functionStartRegex);
+                if (match) {
+                    let lines = file.content.split("\n");
+                    let functionLines = [];
+                    let inFunction = false;
+
+                    // Variable to track indentation level of the function
+                    let functionIndentationLevel = null;
+
+                    lines.forEach((line) => {
+                        // Start of the function - only capture top-level functions
+                        if (line.match(functionStartRegex) && !inFunction && !line.startsWith(" ") && !line.startsWith("\t")) {
+                            inFunction = true;
+                            functionIndentationLevel = line.search(/\S/); // Get the indentation level
+                            functionLines.push(line);
+                        } 
+                        // Collect function lines while inside the function
+                        else if (inFunction && !line.match(functionRegex)) {
+                            if (!line.trim().startsWith("#")) {
+                                functionLines.push(line); // Add non-comment lines
+                            }
+                        }
+                        // Stop collecting when another top-level function is found
+                        else if (inFunction && line.match(functionRegex) && !line.startsWith(" ") && !line.startsWith("\t")) {
+                            inFunction = false; // End of function
+                        }
+                        // Collect nested function lines within the current function
+                        else if (inFunction && line.match(functionRegex) && (line.startsWith(" ") || line.startsWith("\t"))) {
+                            functionLines.push(line); // Collect nested functions
+                        }
+                    });
+
+                    code = functionLines.join("\n"); // Combine all collected lines for the function
                 }
-              }
-              // If another top-level function is encountered, stop collecting
-              else if (inFunction && line.match(functionRegex) && !line.startsWith(" ") && !line.startsWith("\t")) {
-                inFunction = false; // Stop collecting for the current function
-              }
-              // If we encounter nested functions, collect them within the current function
-              else if (inFunction && line.match(functionRegex) && (line.startsWith(" ") || line.startsWith("\t"))) {
-                functionLines.push(line); // Collect nested functions within the current function
-              }
             });
-        
-            code = functionLines.join("\n"); // Join all lines collected for the current function
-          }
-        });
-        
 
-        if (code) {
-          setFunctionCode(code);
-        } else {
-          setError("Function not found.");
+            // If a function is found, set the function code, else show an error message
+            if (code) {
+                setFunctionCode(code);
+            } else {
+                setError("Function not found.");
+            }
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
         }
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
     };
 
     fetchFiles();
-  }, [functionName]);
+}, [functionName]);
 
   // Function to copy code and function name to clipboard
   const copyToClipboard = () => {
