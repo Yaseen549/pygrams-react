@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, CircularProgress, Avatar, Link } from '@mui/material';
+import { github_pygrams_contributors } from 'Pages/constants';
 
 const BackersProfiles = () => {
   const [contributors, setContributors] = useState([]);
@@ -7,7 +8,7 @@ const BackersProfiles = () => {
 
   useEffect(() => {
     // Fetch contributors from GitHub API
-    fetch('https://api.github.com/repos/Yaseen549/pygrams/contributors')
+    fetch(github_pygrams_contributors)
       .then(response => response.json())
       .then(data => {
         setContributors(data);

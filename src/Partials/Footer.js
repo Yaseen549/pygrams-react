@@ -5,6 +5,7 @@
 import React from "react";
 import { Box, Container, Typography, Link, Stack, IconButton } from "@mui/material";
 import { YouTube } from "@mui/icons-material";
+import { youtube_channel_url } from "Pages/constants";
 
 function Footer() {
   return (
@@ -45,7 +46,7 @@ function Footer() {
           {/* Right Section */}
           <Stack direction="row" alignItems="center" spacing={1}>
             <IconButton
-              href="https://www.youtube.com/channel/UCsALeSluL0sDczILKeHvFJA"
+              href={youtube_channel_url}
               target="_blank"
               sx={{ color: "#FF0000" }}
               aria-label="YouTube"

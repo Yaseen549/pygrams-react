@@ -3,12 +3,13 @@ import { Container, Typography, Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Header from "Partials/Header";
 import Footer from "Partials/Footer";
+import { github_repo_url } from "./constants";
 
 const Contribute = () => {
     const navigate = useNavigate();
 
     const handleContributeClick = () => {
-        window.open("https://github.com/Yaseen549/pygrams", "_blank");
+        window.open(github_repo_url, "_blank");
     };
 
     return (

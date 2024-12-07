@@ -7,7 +7,7 @@ const Tips = () => (
         <Typography variant="body2">
             Tip:{" "}
             <span style={{ color: 'grey' }}>
-                Use getSourceCode() to get the source code of a function from a Python program
+                {`Use 'getSourceCode()' to get the source code of a function from a Python program`}
             </span>
             <br />
             Example: getSourceCode(isEven)

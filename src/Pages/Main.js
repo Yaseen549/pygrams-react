@@ -26,6 +26,16 @@ const Main = () => {
     
         fetch(folderUrl)
             .then((response) => {
+                // const existingLimit = response.headers.get('X-RateLimit-Limit');
+                const remaining = response.headers.get('X-RateLimit-Remaining');
+                const reset = response.headers.get('X-RateLimit-Reset');
+                // console.log(existingLimit, remaining, typeof remaining, reset, Date(reset*1000));
+
+                if (remaining === "0") {
+                    const resetTime = new Date(reset * 1000).toLocaleTimeString();
+                    throw new Error(`Rate limit exceeded. Come back after ${resetTime}.`);
+                }
+                
                 if (!response.ok) {
                     throw new Error(`Error: ${response.status} ${response.statusText}`);
                 }
@@ -110,7 +120,7 @@ const Main = () => {
                 <SearchBox searchTerm={searchTerm} handleSearch={handleSearch} />
 
 
-                {error && <Typography color="error">{error}</Typography>}
+                {error && <Typography color="error" display={"flex"} justifyContent={"center"}>{error}</Typography>}
                 {loading && <CircularProgress />}
 
                 {/* Masonry layout for filtered files */}

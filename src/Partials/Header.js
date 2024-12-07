@@ -9,6 +9,12 @@ import {
 import { YouTube, GitHub, Favorite } from "@mui/icons-material";
 import pyLogo from "../imgs/icon.png";
 import DonationDialog from "./donation/DonationDialog";
+import { youtube_tutorial_url } from "Pages/constants";
+import { 
+  github_repo_url, 
+  pypi_pygrams_pkg_url, 
+  pypi_pygrams_pkg_details 
+} from "Pages/constants";
 
 function Header() {
   const [packageVersion, setPackageVersion] = useState("");
@@ -17,7 +23,7 @@ function Header() {
   useEffect(() => {
     const loadPackageDetails = async () => {
       try {
-        const res = await fetch("https://pypi.org/pypi/pygrams/json");
+        const res = await fetch(pypi_pygrams_pkg_details);
         const packageDetails = await res.json();
         setPackageVersion(packageDetails.info.version);
       } catch (err) {
@@ -50,7 +56,7 @@ function Header() {
 
       {/* Links */}
       <Link
-        href="https://youtu.be/VGSCx4Ih2Qg"
+        href={youtube_tutorial_url}
         target="_blank"
         sx={{
           display: "flex",
@@ -69,7 +75,7 @@ function Header() {
       </Link>
 
       <Link
-        href="https://pypi.org/project/pygrams/"
+        href={pypi_pygrams_pkg_url}
         target="_blank"
         sx={{
           display: "flex",
@@ -86,7 +92,7 @@ function Header() {
       </Link>
 
       <Link
-        href="https://github.com/Yaseen549/pygrams"
+        href={github_repo_url}
         target="_blank"
         sx={{
           display: "flex",

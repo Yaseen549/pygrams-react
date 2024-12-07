@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Typography, Link } from '@mui/material';
+import { github_repo_url, youtube_tutorial_url } from 'Pages/constants';
 
 const Banner = () => (
     <Box sx={{ textAlign: 'center', mb: 4 }}>
@@ -15,7 +16,7 @@ const Banner = () => (
             The Python Package to get all your hustling Programs in one{" "}
             <Link 
             className='boldLinks'
-                href="https://github.com/Yaseen549/pygrams" 
+                href={github_repo_url} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 sx={{ fontWeight: 'bold', textDecoration: 'none' }}
@@ -32,7 +33,7 @@ const Banner = () => (
             <span className="bold">
                 Watch Tutorials on{" "}
                 <Link
-                    href="https://youtu.be/VGSCx4Ih2Qg"
+                    href={youtube_tutorial_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     sx={{ fontWeight: 'bold', color: 'red', textDecoration: 'none' }}
