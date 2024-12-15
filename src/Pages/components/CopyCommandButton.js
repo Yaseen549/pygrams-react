@@ -1,22 +1,26 @@
 import React, { useState } from 'react';
 import { Button, Tooltip, IconButton, Typography, Box } from '@mui/material';
 import { FileCopy as FileCopyIcon, Check as CheckIcon } from '@mui/icons-material';
+import { version_number } from 'Pages/constants';
+
+
+const append_version_number = `${version_number ? `==${version_number}` : ""}`;
 
 const CopyCommandButton = () => {
     const [copySuccess, setCopySuccess] = useState(false);
 
     const handleCopy = () => {
-        const textToCopy = "pip install pygrams";
+        const textToCopy = `pip install pygrams${append_version_number}`;
         navigator.clipboard.writeText(textToCopy);
         setCopySuccess(true);
         setTimeout(() => setCopySuccess(false), 2000); // Reset after 2 seconds
     };
 
     return (
-        <Box sx={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center', 
+        <Box sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
             marginBottom: '20px' // Adds space at the bottom
         }}>
             <Button
@@ -25,7 +29,7 @@ const CopyCommandButton = () => {
                 sx={{ display: 'flex', alignItems: 'center' }} // Ensures button text and icon are aligned
             >
                 <Typography variant="body1" sx={{ marginRight: '8px' }}>
-                    {copySuccess ? "Copied!" : "pip install pygrams"}
+                    {copySuccess ? "Copied!" : `pip install pygrams${append_version_number}`}
                 </Typography>
 
                 <Tooltip title={copySuccess ? "Copied!" : "Copy to clipboard"} arrow>

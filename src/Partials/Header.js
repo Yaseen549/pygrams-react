@@ -15,6 +15,7 @@ import {
   pypi_pygrams_pkg_url, 
   pypi_pygrams_pkg_details 
 } from "Pages/constants";
+import { version_number } from "Pages/constants";
 
 function Header() {
   const [packageVersion, setPackageVersion] = useState("");
@@ -51,7 +52,9 @@ function Header() {
         variant="body1"
         sx={{ fontWeight: "bold", marginRight: "24px", color: "gray" }}
       >
-        v{packageVersion}
+        v{version_number? version_number : packageVersion}
+        {/* v{packageVersion} */}
+        {/* v{`${version_number}`} */}
       </Typography>
 
       {/* Links */}

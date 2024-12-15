@@ -21,69 +21,138 @@ const Main = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        // const folderUrl = "../../PYTHON/pythonprograms";
-        const folderUrl = github_pygrams_dir; // github url
+        const fetchFiles = async (url) => {
+            const response = await fetch(url);
+            const remaining = response.headers.get("X-RateLimit-Remaining");
+            const reset = response.headers.get("X-RateLimit-Reset");
     
-        fetch(folderUrl)
-            .then((response) => {
-                // const existingLimit = response.headers.get('X-RateLimit-Limit');
-                const remaining = response.headers.get('X-RateLimit-Remaining');
-                const reset = response.headers.get('X-RateLimit-Reset');
-                // console.log(existingLimit, remaining, typeof remaining, reset, Date(reset*1000));
-
-                if (remaining === "0") {
-                    const resetTime = new Date(reset * 1000).toLocaleTimeString();
-                    throw new Error(`Rate limit exceeded. Come back after ${resetTime}.`);
-                }
-                
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.status} ${response.statusText}`);
-                }
-                return response.json();
-            })
-            .then((data) => {
-                const filePromises = data.map((file) => {
-                    return fetch(file.download_url)
-                        .then((res) => {
-                            if (!res.ok) {
-                                throw new Error(`Error fetching file: ${res.statusText}`);
-                            }
-                            return res.text();
-                        })
-                        .then((content) => ({
-                            name: file.name,
-                            content,
-                        }));
-                });
+            if (remaining === "0") {
+                const resetTime = new Date(reset * 1000).toLocaleTimeString();
+                throw new Error(`Rate limit exceeded. Come back after ${resetTime}.`);
+            }
     
-                return Promise.all(filePromises);
-            })
-            .then((filesWithContent) => {
-                const parsedFiles = filesWithContent.map((file) => {
-                    // Match all function definitions ('def') that are not indented
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status} ${response.statusText}`);
+            }
+    
+            const data = await response.json();
+            const filePromises = data.map(async (file) => {
+                if (file.type === "dir") {
+                    // Recursive call for nested folders
+                    return await fetchFiles(file.url);
+                } else if (file.type === "file" && file.download_url) {
+                    const fileResponse = await fetch(file.download_url);
+                    if (!fileResponse.ok) {
+                        throw new Error(`Error fetching file: ${fileResponse.statusText}`);
+                    }
+                    const content = await fileResponse.text();
+                    return { name: file.name, content };
+                }
+                return null;
+            });
+    
+            const files = (await Promise.all(filePromises)).flat().filter(Boolean);
+            return files;
+        };
+    
+        const fetchAllFiles = async () => {
+            try {
+                setLoading(true);
+                const files = await fetchFiles(github_pygrams_dir);
+                const parsedFiles = files.map((file) => {
+                    // Extract top-level function definitions
                     const functionNames = Array.from(
-                        file.content.matchAll(/^def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/gm) // Regex for top-level functions only
+                        file.content.matchAll(/^def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/gm)
                     ).map((match) => match[1]);
     
                     return { ...file, functionNames };
                 });
     
-                // Prioritize 'pygrams.py' by placing it first if it exists
+                // Prioritize 'pygrams.py' if it exists
                 const sortedFiles = parsedFiles.sort((a, b) => {
-                    if (a.name === 'pygrams.py') return -1;
-                    if (b.name === 'pygrams.py') return 1;
+                    if (a.name === "pygrams.py") return -1;
+                    if (b.name === "pygrams.py") return 1;
                     return 0;
                 });
     
                 setFiles(sortedFiles);
                 setFilteredFiles(sortedFiles);
+            } catch (error) {
+                setError(error.message);
+            } finally {
                 setLoading(false);
-            })
-            .catch((err) => {
-                setError(err.message);
-                setLoading(false);
-            });
+            }
+        };
+    
+        fetchAllFiles();
     }, []);
+    
+    
+
+    // useEffect(() => {
+    //     // const folderUrl = "../../PYTHON/pythonprograms";
+    //     const folderUrl = github_pygrams_dir; // github url
+    
+    //     fetch(folderUrl)
+    //         .then((response) => {
+    //             // const existingLimit = response.headers.get('X-RateLimit-Limit');
+    //             const remaining = response.headers.get('X-RateLimit-Remaining');
+    //             const reset = response.headers.get('X-RateLimit-Reset');
+    //             // console.log(existingLimit, remaining, typeof remaining, reset, Date(reset*1000));
+
+    //             if (remaining === "0") {
+    //                 const resetTime = new Date(reset * 1000).toLocaleTimeString();
+    //                 throw new Error(`Rate limit exceeded. Come back after ${resetTime}.`);
+    //             }
+                
+    //             if (!response.ok) {
+    //                 throw new Error(`Error: ${response.status} ${response.statusText}`);
+    //             }
+    //             return response.json();
+    //         })
+    //         .then((data) => {
+    //             const filePromises = data.map((file) => {
+    //                 return fetch(file.download_url)
+    //                     .then((res) => {
+    //                         if (!res.ok) {
+    //                             throw new Error(`Error fetching file: ${res.statusText}`);
+    //                         }
+    //                         return res.text();
+    //                     })
+    //                     .then((content) => ({
+    //                         name: file.name,
+    //                         content,
+    //                     }));
+    //             });
+    
+    //             return Promise.all(filePromises);
+    //         })
+    //         .then((filesWithContent) => {
+    //             const parsedFiles = filesWithContent.map((file) => {
+    //                 // Match all function definitions ('def') that are not indented
+    //                 const functionNames = Array.from(
+    //                     file.content.matchAll(/^def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/gm) // Regex for top-level functions only
+    //                 ).map((match) => match[1]);
+    
+    //                 return { ...file, functionNames };
+    //             });
+    
+    //             // Prioritize 'pygrams.py' by placing it first if it exists
+    //             const sortedFiles = parsedFiles.sort((a, b) => {
+    //                 if (a.name === 'pygrams.py') return -1;
+    //                 if (b.name === 'pygrams.py') return 1;
+    //                 return 0;
+    //             });
+    
+    //             setFiles(sortedFiles);
+    //             setFilteredFiles(sortedFiles);
+    //             setLoading(false);
+    //         })
+    //         .catch((err) => {
+    //             setError(err.message);
+    //             setLoading(false);
+    //         });
+    // }, []);
     
 
     const handleSearch = (event) => {
