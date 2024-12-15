@@ -29,36 +29,49 @@ function FunctionPage() {
   const assembledFunctionName = formatFunctionName(functionName);
 
   useEffect(() => {
-    const fetchFiles = async () => {
-        try {
-            const folderUrl = github_pygrams_dir; // GitHub URL
-            const response = await fetch(folderUrl);
-            if (!response.ok) {
-                throw new Error(`Error: ${response.status} ${response.statusText}`);
+    const fetchFiles = async (url) => {
+        const response = await fetch(url);
+        const remaining = response.headers.get("X-RateLimit-Remaining");
+        const reset = response.headers.get("X-RateLimit-Reset");
+
+        if (remaining === "0") {
+            const resetTime = new Date(reset * 1000).toLocaleTimeString();
+            throw new Error(`Rate limit exceeded. Come back after ${resetTime}.`);
+        }
+
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        const filePromises = data.map(async (file) => {
+            if (file.type === "dir") {
+                // Recursive call for nested folders
+                return await fetchFiles(file.url);
+            } else if (file.type === "file" && file.download_url) {
+                const fileResponse = await fetch(file.download_url);
+                if (!fileResponse.ok) {
+                    throw new Error(`Error fetching file: ${fileResponse.statusText}`);
+                }
+                const content = await fileResponse.text();
+                return { name: file.name, content };
             }
-            const data = await response.json();
+            return null;
+        });
 
-            // Fetch content for each file
-            const filePromises = data.map((file) =>
-                fetch(file.download_url)
-                    .then((res) => {
-                        if (!res.ok) {
-                            throw new Error(`Error fetching file: ${res.statusText}`);
-                        }
-                        return res.text();
-                    })
-                    .then((content) => ({
-                        name: file.name,
-                        content,
-                    }))
-            );
+        const files = (await Promise.all(filePromises)).flat().filter(Boolean);
+        return files;
+    };
 
-            const filesWithContent = await Promise.all(filePromises);
+    const fetchFunctionCode = async () => {
+        try {
+            setLoading(true);
 
+            const files = await fetchFiles(github_pygrams_dir); // Fetch all files, including subfolders
             let code = "";
 
             // Iterate through each file's content
-            filesWithContent.forEach((file) => {
+            files.forEach((file) => {
                 // Create a regex to match the specific function's definition
                 const functionStartRegex = new RegExp(`def\\s+${functionName}\\s*\\(`);
                 const functionRegex = /def\s+/; // General regex for any function definition
@@ -113,8 +126,9 @@ function FunctionPage() {
         }
     };
 
-    fetchFiles();
+    fetchFunctionCode();
 }, [functionName]);
+
 
   // Function to copy code and function name to clipboard
   const copyToClipboard = () => {
