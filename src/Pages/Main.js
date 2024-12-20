@@ -11,6 +11,7 @@ import Tips from "./components/Tips";
 import Masonry from 'react-masonry-css'; // Import Masonry for grid layout
 import LibraryImportInstructions from "./components/LibraryImportInstructions";
 import { github_pygrams_dir } from "./constants";
+import LibrarySampleCode from "./components/LibrarySampleCode";
 
 const Main = () => {
     const navigate = useNavigate();
@@ -184,6 +185,8 @@ const Main = () => {
 
                 {/* Library Import Instructions */}
                 <LibraryImportInstructions />
+
+                <LibrarySampleCode />
                 
                 {/* Search Box */}
                 <SearchBox searchTerm={searchTerm} handleSearch={handleSearch} />
