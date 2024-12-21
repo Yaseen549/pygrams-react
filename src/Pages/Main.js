@@ -26,16 +26,16 @@ const Main = () => {
             const response = await fetch(url);
             const remaining = response.headers.get("X-RateLimit-Remaining");
             const reset = response.headers.get("X-RateLimit-Reset");
-    
+
             if (remaining === "0") {
                 const resetTime = new Date(reset * 1000).toLocaleTimeString();
                 throw new Error(`Rate limit exceeded. Come back after ${resetTime}.`);
             }
-    
+
             if (!response.ok) {
                 throw new Error(`Error: ${response.status} ${response.statusText}`);
             }
-    
+
             const data = await response.json();
             const filePromises = data.map(async (file) => {
                 if (file.type === "dir") {
@@ -51,11 +51,11 @@ const Main = () => {
                 }
                 return null;
             });
-    
+
             const files = (await Promise.all(filePromises)).flat().filter(Boolean);
             return files;
         };
-    
+
         const fetchAllFiles = async () => {
             try {
                 setLoading(true);
@@ -65,17 +65,19 @@ const Main = () => {
                     const functionNames = Array.from(
                         file.content.matchAll(/^def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/gm)
                     ).map((match) => match[1]);
-    
+        
                     return { ...file, functionNames };
                 });
-    
-                // Prioritize 'pygrams.py' if it exists
+        
+                // Prioritize 'pygrams.py' and move 'others' to the end
                 const sortedFiles = parsedFiles.sort((a, b) => {
                     if (a.name === "pygrams.py") return -1;
                     if (b.name === "pygrams.py") return 1;
+                    if (a.name.toLowerCase().includes("others.py")) return 1;
+                    if (b.name.toLowerCase().includes("others.py")) return -1;
                     return 0;
                 });
-    
+        
                 setFiles(sortedFiles);
                 setFilteredFiles(sortedFiles);
             } catch (error) {
@@ -84,77 +86,10 @@ const Main = () => {
                 setLoading(false);
             }
         };
-    
+        
+
         fetchAllFiles();
     }, []);
-    
-    
-
-    // useEffect(() => {
-    //     // const folderUrl = "../../PYTHON/pythonprograms";
-    //     const folderUrl = github_pygrams_dir; // github url
-    
-    //     fetch(folderUrl)
-    //         .then((response) => {
-    //             // const existingLimit = response.headers.get('X-RateLimit-Limit');
-    //             const remaining = response.headers.get('X-RateLimit-Remaining');
-    //             const reset = response.headers.get('X-RateLimit-Reset');
-    //             // console.log(existingLimit, remaining, typeof remaining, reset, Date(reset*1000));
-
-    //             if (remaining === "0") {
-    //                 const resetTime = new Date(reset * 1000).toLocaleTimeString();
-    //                 throw new Error(`Rate limit exceeded. Come back after ${resetTime}.`);
-    //             }
-                
-    //             if (!response.ok) {
-    //                 throw new Error(`Error: ${response.status} ${response.statusText}`);
-    //             }
-    //             return response.json();
-    //         })
-    //         .then((data) => {
-    //             const filePromises = data.map((file) => {
-    //                 return fetch(file.download_url)
-    //                     .then((res) => {
-    //                         if (!res.ok) {
-    //                             throw new Error(`Error fetching file: ${res.statusText}`);
-    //                         }
-    //                         return res.text();
-    //                     })
-    //                     .then((content) => ({
-    //                         name: file.name,
-    //                         content,
-    //                     }));
-    //             });
-    
-    //             return Promise.all(filePromises);
-    //         })
-    //         .then((filesWithContent) => {
-    //             const parsedFiles = filesWithContent.map((file) => {
-    //                 // Match all function definitions ('def') that are not indented
-    //                 const functionNames = Array.from(
-    //                     file.content.matchAll(/^def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/gm) // Regex for top-level functions only
-    //                 ).map((match) => match[1]);
-    
-    //                 return { ...file, functionNames };
-    //             });
-    
-    //             // Prioritize 'pygrams.py' by placing it first if it exists
-    //             const sortedFiles = parsedFiles.sort((a, b) => {
-    //                 if (a.name === 'pygrams.py') return -1;
-    //                 if (b.name === 'pygrams.py') return 1;
-    //                 return 0;
-    //             });
-    
-    //             setFiles(sortedFiles);
-    //             setFilteredFiles(sortedFiles);
-    //             setLoading(false);
-    //         })
-    //         .catch((err) => {
-    //             setError(err.message);
-    //             setLoading(false);
-    //         });
-    // }, []);
-    
 
     const handleSearch = (event) => {
         const value = event.target.value;
@@ -187,7 +122,7 @@ const Main = () => {
                 <LibraryImportInstructions />
 
                 <LibrarySampleCode />
-                
+
                 {/* Search Box */}
                 <SearchBox searchTerm={searchTerm} handleSearch={handleSearch} />
 
@@ -203,11 +138,19 @@ const Main = () => {
                 >
                     {filteredFiles.map((file, index) => (
                         <Box key={index} sx={{ border: '1px solid #ddd', padding: 2, borderRadius: 1 }}>
-                            <Typography variant="h6" fontWeight={"bold"}>{file.name.replace('.py', '').toUpperCase()}</Typography>
+                            <Typography variant="h6" fontWeight={"bold"}>
+                                {file.name
+                                    .replace('.py', '')  // Remove the .py extension
+                                    .replace(/_/g, ' ')  // Replace underscores with spaces
+                                    .split(' ')          // Split into words
+                                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))  // Capitalize the first letter of each word
+                                    .join(' ')           // Join the words back with spaces
+                                }
+                            </Typography>
                             <ul>
                                 {file.functionNames.map((fn, idx) => (
                                     <li key={idx}>
-                                        <Link to={`/function/${encodeURIComponent(fn)}`} style={{ fontWeight:"bold" }}>
+                                        <Link to={`/function/${encodeURIComponent(fn)}`} style={{ fontWeight: "bold" }}>
                                             {fn}
                                         </Link>
                                     </li>
@@ -217,14 +160,15 @@ const Main = () => {
                     ))}
                 </Masonry>
 
+
                 {/* Backers Profiles */}
                 <BackersProfiles />
 
-                 {/* Contribute Button */}
-                 <Box textAlign="center" mt={4}>
-                    <Button 
-                        variant="contained" 
-                        color="primary" 
+                {/* Contribute Button */}
+                <Box textAlign="center" mt={4}>
+                    <Button
+                        variant="contained"
+                        color="primary"
                         onClick={() => navigate('/contribute')} // Adjust this as needed
                     >
                         Become a Backer
